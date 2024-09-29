@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import fpt.uni.dao.PostDAO;
 import fpt.uni.dao.SettingDAO;
 import fpt.uni.model.Account;
+import fpt.uni.model.Post;
 import fpt.uni.model.UserRole;
 import fpt.uni.utils.EmailSender;
 
@@ -72,7 +73,9 @@ public class ApprovePostServlet extends HttpServlet {
 		// Access settings
 		String supportEmail = settings.get("support_email");
 		
-		EmailSender.sendEmail(supportEmail, status, comment);
+		Post post = postDAO.getPostById(postId);
+		
+		EmailSender.sendEmail(supportEmail, status, post.getContent());
 		
 		response.sendRedirect("DetailPostServlet?id=" + postId); // Redirect back to the post detail page
 	}
