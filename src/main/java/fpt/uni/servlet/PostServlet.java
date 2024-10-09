@@ -10,10 +10,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import fpt.uni.dao.LabelDAO;
 import fpt.uni.dao.PostDAO;
 import fpt.uni.filter.PostFilter;
-import fpt.uni.model.Label;
 import fpt.uni.model.Post;
 
 /**
@@ -22,7 +20,6 @@ import fpt.uni.model.Post;
 @WebServlet("/PostServlet")
 public class PostServlet extends HttpServlet {
 	private PostDAO postDao = new PostDAO();
-	private LabelDAO labelDao = new LabelDAO(); // Assume you have a LabelDao
 	private static final long serialVersionUID = 1L;
 
 	/**
@@ -44,8 +41,7 @@ public class PostServlet extends HttpServlet {
 
 		// Initialize PostFilter
 		PostFilter filter = new PostFilter();
-		filter.setLabelId(
-				request.getParameter("labelId") != null ? Long.parseLong(request.getParameter("labelId")) : null);
+		filter.setLocation(request.getParameter("location"));
 		filter.setContent(request.getParameter("content"));
 
 		// Initialize pagination
@@ -54,14 +50,13 @@ public class PostServlet extends HttpServlet {
 
 		// Get data from DAO
 		PostDAO postDAO = new PostDAO();
-		LabelDAO labelDAO = new LabelDAO();
 
 		List<Post> posts = postDAO.getPosts(filter, page, pageSize);
-		List<Label> labels = labelDAO.getAllLabels();
+//		List<Label> labels = labelDAO.getAllLabels();
 		int totalPosts = postDAO.getTotalPosts(filter);
 		int totalPages = (int) Math.ceil((double) totalPosts / pageSize);
 
-		filter.setLabels(labels);
+//		filter.setLabels(labels);
 		filter.setTotalPages(totalPages);
 
 		// Set attributes for JSP
@@ -90,7 +85,7 @@ public class PostServlet extends HttpServlet {
 		String labelIdParam = request.getParameter("labelId");
 		String contentParam = request.getParameter("content");
 
-		filter.setLabelId(labelIdParam != null && !labelIdParam.isEmpty() ? Long.parseLong(labelIdParam) : null);
+		filter.setLocation(request.getParameter("location"));
 		filter.setContent(contentParam != null ? contentParam : "");
 
 		// Initialize pagination
@@ -99,13 +94,10 @@ public class PostServlet extends HttpServlet {
 
 		// Get data from DAO
 		PostDAO postDAO = new PostDAO();
-		LabelDAO labelDAO = new LabelDAO();
 
 		List<Post> posts = postDAO.getPosts(filter, page, pageSize);
-		List<Label> labels = labelDAO.getAllLabels();
 		int totalPosts = postDAO.getTotalPosts(filter);
 		int totalPages = (int) Math.ceil((double) totalPosts / pageSize);
-		filter.setLabels(labels);
 		filter.setTotalPages(totalPages);
 		// Set attributes for JSP
 		request.setAttribute("posts", posts);

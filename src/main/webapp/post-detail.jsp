@@ -17,7 +17,7 @@
 				<strong>Created By:</strong> ${post.username}
 			</p>
 			<p>
-				<strong>Location:</strong> ${post.city} - ${post.location}
+				<strong>Location:</strong> ${post.location}
 			</p>
 			<p>
 				<strong>Content:</strong>

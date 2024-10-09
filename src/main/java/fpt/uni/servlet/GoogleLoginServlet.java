@@ -30,8 +30,8 @@ import fpt.uni.model.UserRole;
  */
 @WebServlet(name = "GoogleLoginServlet", urlPatterns = { "/googleLogin" })
 public class GoogleLoginServlet extends HttpServlet {
-	private static final String CLIENT_ID = "";
-	private static final String CLIENT_SECRET = "";
+	private static final String CLIENT_ID = "737347490351-dr5r55k9pjvtcrgk822il7aeodvhc58d.apps.googleusercontent.com";
+	private static final String CLIENT_SECRET = "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";
 	private static final String REDIRECT_URI = "http://localhost:8080/complain-project/googleLogin";
 
 	@Override

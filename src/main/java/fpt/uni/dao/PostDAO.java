@@ -14,98 +14,107 @@ import fpt.uni.utils.DbContext;
 public class PostDAO extends DbContext {
 
 	public List<Post> getPosts(PostFilter filter, int page, int pageSize) {
-		List<Post> posts = new ArrayList<>();
-		String sql = "SELECT p.*, a.username, l.city, l.location " + "FROM Post p "
-				+ "JOIN Account a ON p.accountId = a.id " + "JOIN Label l ON p.labelId = l.id " + "WHERE 1=1 ";
+	    List<Post> posts = new ArrayList<>();
+	    String sql = "SELECT p.*, a.username " +
+	                 "FROM Post p " +
+	                 "JOIN Account a ON p.accountId = a.id " +
+	                 "WHERE 1=1 ";
 
-		// Build dynamic query based on filters
-		if (filter.getLabelId() != null) {
-			sql += "AND p.labelId = ? ";
-		}
-		if (filter.getContent() != null && !filter.getContent().isEmpty()) {
-			sql += "AND p.content LIKE ? ";
-		}
+	    // Build dynamic query based on filters
+	    if (filter.getLocation() != null && !filter.getLocation().isEmpty()) {
+	        sql += "AND p.location = ? ";
+	    }
+	    if (filter.getContent() != null && !filter.getContent().isEmpty()) {
+	        sql += "AND p.content LIKE ? ";
+	    }
 
-		sql += "ORDER BY p.createdAt DESC " + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY;";
+	    sql += "ORDER BY p.createdAt DESC " +
+	           "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY;";
 
-		try (Connection connection = getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
+	    try (Connection connection = getConnection();
+	         PreparedStatement statement = connection.prepareStatement(sql)) {
 
-			int parameterIndex = 1;
+	        int parameterIndex = 1;
 
-			// Set parameters
-			if (filter.getLabelId() != null) {
-				statement.setLong(parameterIndex++, filter.getLabelId());
-			}
-			if (filter.getContent() != null && !filter.getContent().isEmpty()) {
-				statement.setString(parameterIndex++, "%" + filter.getContent() + "%");
-			}
+	        // Set parameters
+	        if (filter.getLocation() != null && !filter.getLocation().isEmpty()) {
+	            statement.setString(parameterIndex++, filter.getLocation());
+	        }
+	        if (filter.getContent() != null && !filter.getContent().isEmpty()) {
+	            statement.setString(parameterIndex++, "%" + filter.getContent() + "%");
+	        }
 
-			// Set paging parameters
-			statement.setInt(parameterIndex++, (page - 1) * pageSize);
-			statement.setInt(parameterIndex, pageSize);
+	        // Set paging parameters
+	        statement.setInt(parameterIndex++, (page - 1) * pageSize);
+	        statement.setInt(parameterIndex, pageSize);
 
-			try (ResultSet resultSet = statement.executeQuery()) {
-				while (resultSet.next()) {
-					Post post = new Post();
-					post.setId(resultSet.getLong("id"));
-					post.setContent(resultSet.getString("content"));
-					post.setCreatedAt(resultSet.getDate("createdAt"));
-					post.setLabelId(resultSet.getLong("labelId"));
-					post.setAccountId(resultSet.getLong("accountId"));
-					post.setStatus(resultSet.getString("status"));
-//					post.setAccountId(resultSet.get); // Get username
-					posts.add(post);
-				}
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return posts;
+	        try (ResultSet resultSet = statement.executeQuery()) {
+	            while (resultSet.next()) {
+	                Post post = new Post();
+	                post.setId(resultSet.getLong("id"));
+	                post.setContent(resultSet.getString("content"));
+	                post.setCreatedAt(resultSet.getDate("createdAt"));
+	                post.setLocation(resultSet.getString("location"));
+	                post.setAccountId(resultSet.getLong("accountId"));
+	                post.setStatus(resultSet.getString("status"));
+	                // Optionally fetch the username
+	                post.setUsername(resultSet.getString("username"));
+	                posts.add(post);
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return posts;
 	}
+
 
 	public int getTotalPosts(PostFilter filter) {
-		int total = 0;
-		String sql = "SELECT COUNT(*) FROM Post p " + "JOIN Account a ON p.accountId = a.id "
-				+ "JOIN Label l ON p.labelId = l.id " + "WHERE 1=1 ";
+	    int total = 0;
+	    String sql = "SELECT COUNT(*) FROM Post p " +
+	                 "JOIN Account a ON p.accountId = a.id " +
+	                 "WHERE 1=1 ";
 
-		// Build dynamic query based on filters
-		if (filter.getLabelId() != null) {
-			sql += "AND p.labelId = ? ";
-		}
-		if (filter.getContent() != null && !filter.getContent().isEmpty()) {
-			sql += "AND p.content LIKE ? ";
-		}
+	    // Build dynamic query based on filters
+	    if (filter.getLocation() != null && !filter.getLocation().isEmpty()) {
+	        sql += "AND p.location = ? ";
+	    }
+	    if (filter.getContent() != null && !filter.getContent().isEmpty()) {
+	        sql += "AND p.content LIKE ? ";
+	    }
 
-		try (Connection connection = getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
+	    try (Connection connection = getConnection();
+	         PreparedStatement statement = connection.prepareStatement(sql)) {
 
-			int parameterIndex = 1;
+	        int parameterIndex = 1;
 
-			// Set parameters
-			if (filter.getLabelId() != null) {
-				statement.setLong(parameterIndex++, filter.getLabelId());
-			}
-			if (filter.getContent() != null && !filter.getContent().isEmpty()) {
-				statement.setString(parameterIndex++, "%" + filter.getContent() + "%");
-			}
+	        // Set parameters
+	        if (filter.getLocation() != null && !filter.getLocation().isEmpty()) {
+	            statement.setString(parameterIndex++, filter.getLocation());
+	        }
+	        if (filter.getContent() != null && !filter.getContent().isEmpty()) {
+	            statement.setString(parameterIndex++, "%" + filter.getContent() + "%");
+	        }
 
-			try (ResultSet resultSet = statement.executeQuery()) {
-				if (resultSet.next()) {
-					total = resultSet.getInt(1);
-				}
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return total;
+	        try (ResultSet resultSet = statement.executeQuery()) {
+	            if (resultSet.next()) {
+	                total = resultSet.getInt(1);
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return total;
 	}
 
+
 	public void createPost(Post post) {
-		String sql = "INSERT INTO Post (accountId, labelId, content, status, createdAt, updatedAt) VALUES (?, ?, ?, ?, GETDATE(), GETDATE())";
+		String sql = "INSERT INTO Post (accountId, location, content, status, createdAt, updatedAt) VALUES (?, ?, ?, ?, GETDATE(), GETDATE())";
 
 		try (Connection connection = getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
 
 			statement.setLong(1, post.getAccountId());
-			statement.setLong(2, post.getLabelId());
+			statement.setString(2, post.getLocation());
 			statement.setString(3, post.getContent());
 			statement.setString(4, "PENDING"); // Default status
 
@@ -116,35 +125,37 @@ public class PostDAO extends DbContext {
 	}
 
 	public Post getPostById(long id) {
-		Post post = null;
-		String sql = "SELECT p.*, a.username, l.city, l.location " + "FROM Post p "
-				+ "JOIN Account a ON p.accountId = a.id " + "JOIN Label l ON p.labelId = l.id " + "WHERE p.id = ?";
+	    Post post = null;
+	    String sql = "SELECT p.*, a.username " +
+	                 "FROM Post p " +
+	                 "JOIN Account a ON p.accountId = a.id " +
+	                 "WHERE p.id = ?";
 
-		try (Connection connection = getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
-			statement.setLong(1, id);
-			ResultSet resultSet = statement.executeQuery();
+	    try (Connection connection = getConnection();
+	         PreparedStatement statement = connection.prepareStatement(sql)) {
+	        statement.setLong(1, id);
+	        ResultSet resultSet = statement.executeQuery();
 
-			if (resultSet.next()) {
-				post = new Post();
-				post.setId(resultSet.getLong("id"));
-				post.setAccountId(resultSet.getLong("accountId"));
-				post.setLabelId(resultSet.getLong("labelId"));
-				post.setContent(resultSet.getString("content"));
-				post.setStatus(resultSet.getString("status"));
-				post.setCreatedAt(resultSet.getDate("createdAt"));
-				post.setUpdatedAt(resultSet.getDate("updatedAt"));
-				post.setDeletedAt(resultSet.getDate("deletedAt"));
+	        if (resultSet.next()) {
+	            post = new Post();
+	            post.setId(resultSet.getLong("id"));
+	            post.setAccountId(resultSet.getLong("accountId"));
+	            post.setLocation(resultSet.getString("location")); // Fetch location from the Post table
+	            post.setContent(resultSet.getString("content"));
+	            post.setStatus(resultSet.getString("status"));
+	            post.setCreatedAt(resultSet.getDate("createdAt"));
+	            post.setUpdatedAt(resultSet.getDate("updatedAt"));
+	            post.setDeletedAt(resultSet.getDate("deletedAt"));
 
-				// Add additional fields from the joined tables if needed
-				post.setUsername(resultSet.getString("username"));
-				post.setCity(resultSet.getString("city"));
-				post.setLocation(resultSet.getString("location"));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return post;
+	            // Add additional fields from the Account table
+	            post.setUsername(resultSet.getString("username"));
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return post;
 	}
+
 
 	public void updatePostStatus(long postId, String status, String comment, long moderatorId) {
 		String updateSql = "UPDATE Post SET status = ? WHERE id = ?";

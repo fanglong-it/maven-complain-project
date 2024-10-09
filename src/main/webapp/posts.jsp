@@ -9,15 +9,10 @@
 
 	<form method="POST" action="PostServlet">
 		<div class="form-group">
-			<label for="label">Select Label:</label> <select id="label"
-				name="labelId" class="form-control">
-				<option value="">-- All Labels --</option>
-				<c:forEach var="label" items="${filter.labels}">
-					<option value="${label.id}"
-						${filter.labelId == label.id ? 'selected' : ''}>${label.city}
-						- ${label.location}</option>
-				</c:forEach>
-			</select>
+			<label for="label">Input location:</label> 
+			<input type="text"
+				id="accountName" name="location" class="form-control"
+				value="${filter.location}" />
 		</div>
 
 		<div class="form-group">

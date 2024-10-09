@@ -2,13 +2,12 @@ package fpt.uni.filter;
 
 import java.util.List;
 
-import fpt.uni.model.Label;
 
 public class PostFilter {
 	private String content;
-	private Long labelId;
 	private String accountName;
-	private List<Label> labels; // Holds available labels
+	private String location;
+//	private List<Label> labels; // Holds available labels
 
 	private int currentPage; // Current page number
 	private int pageSize; // Number of records per page
@@ -21,14 +20,6 @@ public class PostFilter {
 
 	public void setContent(String content) {
 		this.content = content;
-	}
-
-	public Long getLabelId() {
-		return labelId;
-	}
-
-	public void setLabelId(Long labelId) {
-		this.labelId = labelId;
 	}
 
 	public String getAccountName() {
@@ -55,14 +46,6 @@ public class PostFilter {
 		this.totalPages = totalPages;
 	}
 
-	public List<Label> getLabels() {
-		return labels;
-	}
-
-	public void setLabels(List<Label> labels) {
-		this.labels = labels;
-	}
-
 	public int getPageSize() {
 		return pageSize;
 	}
@@ -70,5 +53,15 @@ public class PostFilter {
 	public void setPageSize(int pageSize) {
 		this.pageSize = pageSize;
 	}
+
+	public String getLocation() {
+		return location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
+	}
+	
+	
 
 }

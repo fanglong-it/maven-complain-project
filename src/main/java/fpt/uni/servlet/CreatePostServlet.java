@@ -1,16 +1,33 @@
 package fpt.uni.servlet;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import javax.mail.Session;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
-import fpt.uni.dao.LabelDAO;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ParseException;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import fpt.uni.dao.PostDAO;
 import fpt.uni.model.Account;
 import fpt.uni.model.Post;
@@ -43,10 +60,7 @@ public class CreatePostServlet extends HttpServlet {
 			response.sendRedirect("login.jsp?error=auth_failure");
 			return;
 		}
-
-		LabelDAO labelDAO = new LabelDAO();
-		request.setAttribute("labels", labelDAO.getAllLabels());
-
+		
 		// Forward the request to the create post JSP page
 		request.getRequestDispatcher("/create-post.jsp").forward(request, response);
 	}
@@ -67,12 +81,18 @@ public class CreatePostServlet extends HttpServlet {
 		}
 
 		String content = request.getParameter("content");
-		Long labelId = Long.parseLong(request.getParameter("labelId"));
+		
+		String province = request.getParameter("province");
+		String district = request.getParameter("district");
+		String ward = request.getParameter("ward");
+		String location = request.getParameter("location");
+		String address = String.format("%s, %s, %s, %s", province, district, ward, location);
 
 		Post post = new Post();
 		post.setContent(content);
-		post.setLabelId(labelId);
+//		post.setLabelId(labelId);
 		post.setAccountId(user.getId());
+		post.setLocation(address);
 
 		PostDAO postDAO = new PostDAO();
 		postDAO.createPost(post); // Your method to save the post in the database

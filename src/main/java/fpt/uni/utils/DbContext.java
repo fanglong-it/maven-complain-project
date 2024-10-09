@@ -10,7 +10,7 @@ public class DbContext {
 
 	// Connection details
 	private static final String USER = "sa";
-	private static final String PASSWORD = "Cunplong115";
+	private static final String PASSWORD = "Cunplong115@";
 	private static final String URL = "jdbc:sqlserver://localhost:1433;databaseName=complain-db";
 
 	// Instance variable for the connection

@@ -16,7 +16,7 @@ import lombok.Setter;
 public class Post {
 	private Long id;
 	private Long accountId; // Foreign key reference to Account
-	private Long labelId; // Foreign key reference to Label
+	private String location;
 	private String content;
 	private String status;
 	private Date createdAt;
@@ -24,6 +24,4 @@ public class Post {
 	private Date deletedAt; // For soft delete
 	
 	private String username;
-	private String city;
-	private String location;
 }
