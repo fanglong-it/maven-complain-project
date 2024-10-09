@@ -6,17 +6,17 @@ new Vue({
 		wards: [],
 		selectedProvince: '',
 		selectedDistrict: '',
-		selectedWard: ''
+		selectedWard: '',
+		base_url: window.base_url,
 	},
 	created() {
 		this.loadProvinces();
 	},
 	methods: {
 		loadProvinces() {
-			fetch('api/provinces') // Adjust this endpoint as necessary
-				.then(response => response.json())
-				.then(data => {
-					this.provinces.push(data); // Assuming data is an array of provinces
+			axios.get(`${base_url}/api/provinces`) // Adjust this endpoint as necessary
+				.then(response => {
+					this.provinces.push(response.data); // Assuming response.data is an array of provinces
 					console.log(this.provinces);
 				})
 				.catch(error => console.error('Error fetching provinces:', error));
